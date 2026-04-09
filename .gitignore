@@ -1,0 +1,8 @@
+# Never commit secrets
+.env
+*.env
+secrets/
+*_secrets.*
+
+# Local config overrides
+local_config.*
