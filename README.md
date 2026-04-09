@@ -29,12 +29,15 @@ The Gemma 4 26B-A4B uses **Mixture of Experts** architecture:
 - Reads ~7GB of weights per token vs 9GB for Bielik 4.5B dense
 - Result: faster generation despite 6× more total parameters
 
-Real benchmark (same prompt, same hardware):
+Real benchmark (same prompt, same hardware, all models loaded simultaneously):
 
-| Model | Active params | tok/s |
-|-------|-------------|-------|
-| Bielik 4.5B dense | 4.5B | ~18 |
-| Gemma 4 26B MoE | ~3.8B | ~24 |
+| Model | Architecture | Active params | VRAM | tok/s |
+|-------|-------------|-------------|------|-------|
+| Bielik 4.5B dense | Dense | 4.5B | ~12GB | ~18 |
+| Gemma 4 26B MoE | MoE | ~3.8B | ~55GB | ~24 |
+| Gemma 4 31B NVFP4-turbo | Dense + FP4 quant | 31B | ~25GB | ~9.5 |
+
+MoE is fastest despite being the largest total-parameter model. NVFP4 quantization reduces VRAM significantly but dense attention to all 31B params still loses to MoE's sparse activation.
 
 ---
 
@@ -172,6 +175,7 @@ docker stop gemma4 && docker rm gemma4
 | `WWTCyberLab/gemma-4-26B-A4B-it-abliterated` | ~55GB | ~24 | **Recommended** — fast MoE, uncensored |
 | `paperscarecrow/Gemma-4-31B-it-abliterated` | ~76GB | ~6 | Slower, denser reasoning |
 | `google/gemma-4-31B-it` | ~76GB | ~6 | Censored, reference version |
+| `LilaRest/gemma-4-31B-it-NVFP4-turbo` | ~25GB | ~9.5 | ❌ Tested, rejected — MoE faster despite 2.2× more VRAM |
 
 ---
 
